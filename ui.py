@@ -55,8 +55,8 @@ country = st.sidebar.selectbox(
 rows_limit = st.sidebar.slider(
     "Rows to display",
     min_value=5,
-    max_value=50,
-    value=20
+    max_value=100,
+    value=30
 )
 
 filtered_df = df.copy()
@@ -116,19 +116,7 @@ st.dataframe(table_df, use_container_width=True)
 st.divider()
 
 # ---------------- POPULARITY COMPARISON ----------------
-if numeric_cols:
-    st.markdown("### 📈 Popularity Comparison")
 
-    metric = st.selectbox("Select popularity metric", numeric_cols)
-
-    chart_df = (
-        filtered_df[["workflow", metric]]
-        .dropna()
-        .head(10)
-        .set_index("workflow")
-    )
-
-    st.bar_chart(chart_df)
 
 # ---------------- INSIGHTS SECTION ----------------
 st.markdown("### 🧠 Key Insights")
