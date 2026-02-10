@@ -15,13 +15,3 @@ A system that identifies popular n8n workflows across YouTube, forum discussions
 ```bash
 pip install -r requirements.txt
 
-## 📸 Screenshots
-
-### Dashboard Overview
-![Dashboard Overview](https://raw.githubusercontent.com/gkumar806/n8n-workflow-popularity-dashboard/main/screenshots/dashboard.png)
-
-### Top Popular Workflows
-![Top Popular Workflows](https://raw.githubusercontent.com/gkumar806/n8n-workflow-popularity-dashboard/main/screenshots/popularity.png)
-
-### Popularity Comparison
-![Popularity Comparison](https://raw.githubusercontent.com/gkumar806/n8n-workflow-popularity-dashboard/main/screenshots/Visualization.png)
