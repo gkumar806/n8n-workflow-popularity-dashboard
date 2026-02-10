@@ -1,8 +1,8 @@
 import os
 from dotenv import load_dotenv
 load_dotenv()
-YOUTUBE_KEY=os.getenv("YOUTUBE_API_KEY","")
-DISCOURSE_URL="https://community.n8n.io/latest.json"
+YOUTUBE_KEY = os.getenv("YOUTUBE_API_KEY", "")
+DISCOURSE_URL="https://community.n8n.io"
 SEARCH_TERMS=[
     "n8n workflow",
     "n8n automation", 
