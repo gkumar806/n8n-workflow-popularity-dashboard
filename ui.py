@@ -116,7 +116,42 @@ st.dataframe(table_df, use_container_width=True)
 st.divider()
 
 # ---------------- POPULARITY COMPARISON ----------------
+st.markdown("### 📈 Popularity Comparison")
 
+# Platform-specific metrics
+platform_metrics = {
+    "Google": ["average_interest", "latest_interest"],
+    "Discourse": ["views", "likes", "replies"],
+    "YouTube": ["views", "likes", "comments"]
+}
+
+# Decide available metrics
+if platform != "All" and platform in platform_metrics:
+    available_metrics = [
+        m for m in platform_metrics[platform]
+        if m in filtered_df.columns
+    ]
+else:
+    # fallback: show only numeric metrics that have non-zero values
+    available_metrics = [
+        col for col in numeric_cols
+        if filtered_df[col].sum() > 0
+    ]
+
+if not available_metrics:
+    st.warning("No popularity metrics available for the selected filters.")
+else:
+    metric = st.selectbox("Select popularity metric", available_metrics)
+
+    chart_df = (
+        filtered_df[["workflow", metric]]
+        .dropna()
+        .sort_values(by=metric, ascending=False)
+        .head(10)
+        .set_index("workflow")
+    )
+
+    st.bar_chart(chart_df)
 
 # ---------------- INSIGHTS SECTION ----------------
 st.markdown("### 🧠 Key Insights")
