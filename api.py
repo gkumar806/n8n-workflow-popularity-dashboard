@@ -1,40 +1,58 @@
-from fastapi import FastAPI,Query,HTTPException
-from fastapi.responses import JSONResponse
+from fastapi import FastAPI
 import json
 import uvicorn
-app = FastAPI(title="n8n Workflow Popularity API",version="1.0")
+import os
 
-try:
-    with open("workflows.json", "r") as f:
-        all_workflows=json.load(f)
-except:
-    all_workflows=[]
+app = FastAPI(title="n8n Workflow Popularity API", version="1.0")
+
+
 @app.get("/workflows")
-def get_workflows(platform:str=None,country:str=None,limit:int=50):
+def get_workflows(platform: str = None, country: str = None, limit: int = 50):
+
+    # ✅ Always load fresh data
+    try:
+        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+        file_path = os.path.join(BASE_DIR, "workflows.json")
+
+        with open(file_path, "r", encoding="utf-8") as f:
+            all_workflows = json.load(f)
+
+    except Exception as e:
+        print("❌ File read error:", e)
+        return {"error": "No data available. Run fetch_data.py first"}
+
     if not all_workflows:
         return {"error": "No data available. Run fetch_data.py first"}
-    
-    filtered=all_workflows
+
+    filtered = all_workflows
+
+    # 🔍 Filters
     if platform:
-        filtered=[w for w in filtered if w["platform"].lower()==platform.lower()]
+        filtered = [w for w in filtered if w["platform"].lower() == platform.lower()]
+
     if country:
-        filtered=[w for w in filtered if w["country"].upper() == country.upper()]
+        filtered = [w for w in filtered if w["country"].upper() == country.upper()]
+
+    # 📊 Ranking logic
     for w in filtered:
-        metrics=w["popularity_metrics"]
+        metrics = w["popularity_metrics"]
+
         if "views" in metrics:
-            w["score"]=metrics["views"]
+            w["score"] = metrics["views"]
         elif "replies" in metrics:
-            w["score"]=metrics["replies"]
+            w["score"] = metrics["replies"]
         elif "average_interest" in metrics:
-            w["score"]=metrics["average_interest"]
+            w["score"] = metrics["average_interest"]
         else:
-            w["score"]=0
-    
-    filtered.sort(key=lambda x:x["score"],reverse=True)
+            w["score"] = 0
+
+    filtered.sort(key=lambda x: x["score"], reverse=True)
+
     for w in filtered:
-        w.pop("score",None)
-    
-    return {"count":len(filtered[:limit]),"workflows":filtered[:limit]}
+        w.pop("score", None)
+
+    return {"count": len(filtered[:limit]), "workflows": filtered[:limit]}
+
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
